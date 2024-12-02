@@ -1,0 +1,23 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: golf_club_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Keyin2021  # Root password (change this as needed)
+      MYSQL_DATABASE: golf_club        # Database name
+      MYSQL_USER: golf_user            # User name
+      MYSQL_PASSWORD: golf_user_password  # User password
+    ports:
+      - "3306:3306"  # Expose MySQL port
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Initialize the DB with init.sql
+    networks:
+      - golf_club_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
+      retries: 5
+      interval: 10s
+
+networks:
+  golf_club_network:
+    driver: bridge

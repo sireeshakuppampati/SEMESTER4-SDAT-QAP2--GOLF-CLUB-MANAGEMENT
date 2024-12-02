@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: golf_club_app
+    ports:
+      - "8080:8080" # Map host port 8080 to container port 8080
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/golf_club
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Keyin2021
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    restart: always
+
+  db:
+    image: mysql:8.0
+    container_name: golf_club_db
+    environment:
+      MYSQL_ROOT_PASSWORD: Keyin2021
+      MYSQL_DATABASE: golf_club
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pKeyin2021"]
+      interval: 10s
+      retries: 3
+    restart: always
+
+volumes:
+  db_data:
